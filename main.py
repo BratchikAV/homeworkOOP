@@ -15,3 +15,13 @@ class Mentor:
 
     def __init__(self):
         self.courses_attached = []
+
+
+class Lecturer(Mentor):
+
+    pass
+
+
+class Reviewer(Mentor):
+
+    pass
