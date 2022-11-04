@@ -1,4 +1,6 @@
 class Students:
+    item = []
+
     def __init__(self, name, surname, gender):
         self.name = name
         self.surname = surname
@@ -7,7 +9,7 @@ class Students:
         self.finished_courses = []
         self.grades = {}
         self.all_marks = []
-        # self.rating = round(sum(sum(list(self.grades.values()), [])) / len(sum(list(self.grades.values()), [])), 1)
+        Students.item.append(self)
 
     def __str__(self):
         return f"""Имя: {self.name}
@@ -27,6 +29,17 @@ class Students:
         else:
             return 'Error'
 
+    def group_mark(self, course):
+        for student in Students.item:
+            mark = []
+            if course in student.grades.keys():
+                mark += student.grades[course]
+            else:
+                return
+            return f"{self.name}{self.surname} (средняя оценка на курсе: {round(sum(mark) / len(mark), 1)})"
+        else:
+            return 'Error'
+
     def comparison(self, student):
         if isinstance(student, Students):
             if round(sum(self.all_marks) / len(self.all_marks), 1) > round(sum(student.all_marks) / len(student.all_marks), 1):
@@ -40,10 +53,13 @@ class Students:
 
 
 class Mentor:
+    item = []
+
     def __init__(self, name, surname):
         self.name = name
         self.surname = surname
         self.courses_attached = []
+        Mentor.item.append(self)
 
 
 class Lecturers(Mentor):
@@ -56,6 +72,17 @@ class Lecturers(Mentor):
         return f"""Имя: {self.name}
 Фамилия: {self.surname}
 Средняя оценка за лекции: {round(sum(self.all_marks) / len(self.all_marks), 1)}"""
+
+    def group_mark(self, course):
+        for lector in Lecturers.item:
+            mark = []
+            if course in self.grades.keys():
+                mark += self.grades[course]
+            else:
+                return
+            return f"{self.name}{self.surname} (средняя оценка на курсе: {round(sum(mark) / len(mark), 1)})"
+        else:
+            return 'Error'
 
     def comparison(self, lector):
         if isinstance(lector, Lecturers):
@@ -132,10 +159,11 @@ student_1.rate_lection(professor, "Python.ООП", 10)
 student_1.rate_lection(professor, "Python.Словари", 10)
 
 
-print(student_1.comparison(aspirant))
-print(lector_1.comparison(professor))
-print("-------------------")
-print(aspirant.comparison(student_1))
-print(professor.comparison(lector_1))
-
-
+# print(student_1.comparison(aspirant))
+# print(lector_1.comparison(professor))
+# print("-------------------")
+# print(aspirant.comparison(student_1))
+# print(professor.comparison(lector_1))
+print(student_1.grades)
+print(student_1.group_mark("GIT"))
+print(professor.group_mark("GIT"))
