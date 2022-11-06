@@ -15,8 +15,8 @@ class Students:
         return f"""Имя: {self.name}
 Фамилия: {self.surname}
 Средняя оценка за домашние задания: {round(sum(self.all_marks) / len(self.all_marks), 1)}
-Курсы в процессе изучения: {self.courses_in_progress} 
-Завершенные курсы: {self.finished_courses}"""
+Курсы в процессе изучения: {" ".join(map(str, self.courses_in_progress))} 
+Завершенные курсы: {" ".join(map(str,self.finished_courses))}"""
 
     def rate_lection(self, lector, course, mark):
         if isinstance(lector, Lecturers) and course in lector.courses_attached and course in self.courses_in_progress:
@@ -30,15 +30,14 @@ class Students:
             return 'Error'
 
     def group_mark(self, course):
+        mark = []
         for student in Students.item:
-            mark = []
             if course in student.grades.keys():
-                mark += student.grades[course]
+                mark.extend(student.grades[course])
             else:
                 return
-            return f"{self.name}{self.surname} (средняя оценка на курсе: {round(sum(mark) / len(mark), 1)})"
-        else:
-            return 'Error'
+        return f"""{self.name}{self.surname} 
+(средняя оценка на курсе: {round(sum(mark) / len(mark), 1)})"""
 
     def comparison(self, student):
         if isinstance(student, Students):
@@ -51,22 +50,43 @@ class Students:
         else:
             return "Error"
 
+    def __eq__(self, student):
+        if isinstance(student, Students):
+            if round(sum(self.all_marks) / len(self.all_marks), 1) == round(
+                    sum(student.all_marks) / len(student.all_marks), 1):
+                return True
+            else:
+                return False
+        else:
+            return "Error"
+
+    def __lt__(self, student):
+        if isinstance(student, Students):
+            if round(sum(self.all_marks) / len(self.all_marks), 1) < round(
+                    sum(student.all_marks) / len(student.all_marks), 1):
+                return True
+            else:
+                return False
+        else:
+            return "Error"
+
 
 class Mentor:
-    item = []
 
     def __init__(self, name, surname):
         self.name = name
         self.surname = surname
         self.courses_attached = []
-        Mentor.item.append(self)
 
 
 class Lecturers(Mentor):
+    item = []
+
     def __init__(self, name, surname):
         super().__init__(name, surname)
         self.grades = {}
         self.all_marks = []
+        Lecturers.item.append(self)
 
     def __str__(self):
         return f"""Имя: {self.name}
@@ -74,15 +94,14 @@ class Lecturers(Mentor):
 Средняя оценка за лекции: {round(sum(self.all_marks) / len(self.all_marks), 1)}"""
 
     def group_mark(self, course):
+        mark = []
         for lector in Lecturers.item:
-            mark = []
-            if course in self.grades.keys():
-                mark += self.grades[course]
+            if course in lector.grades.keys():
+                mark.extend(lector.grades[course])
             else:
                 return
-            return f"{self.name}{self.surname} (средняя оценка на курсе: {round(sum(mark) / len(mark), 1)})"
-        else:
-            return 'Error'
+        return f"""{self.name} {self.surname} 
+(средний балл  за проведение занятий по курсу: {round(sum(mark) / len(mark), 1)})"""
 
     def comparison(self, lector):
         if isinstance(lector, Lecturers):
@@ -95,12 +114,30 @@ class Lecturers(Mentor):
         else:
             return "Error"
 
+    def __eq__(self, lector):
+        if isinstance(lector, Lecturers):
+            if round(sum(self.all_marks) / len(self.all_marks), 1) == round(sum(lector.all_marks) / len(lector.all_marks), 1):
+                return True
+            else:
+                return False
+        else:
+            return "Error"
+
+    def __lt__(self, lector):
+        if isinstance(lector, Lecturers):
+            if round(sum(self.all_marks) / len(self.all_marks), 1) < round(sum(lector.all_marks) / len(lector.all_marks), 1):
+                return True
+            else:
+                return False
+        else:
+            return "Error"
+
+
 
 class Reviewers(Mentor):
     def __str__(self):
         return f"""Имя: {self.name}
 Фамилия: {self.surname}"""
-
 
     def rate_hw(self, student, course, mark):
         if isinstance(student, Students) and course in self.courses_attached and course in student.courses_in_progress:
@@ -144,7 +181,7 @@ lector_1.courses_attached += ["Python.Списки"]
 lector_1.courses_attached += ["Python.Словари"]
 lector_1.courses_attached += ["GIT"]
 lector_1.courses_attached += ["Python.ООП"]
-student_1.rate_lection(lector_1, "Python.ООП", 9)
+student_1.rate_lection(lector_1, "GIT", 8)
 student_1.rate_lection(lector_1, "Python.Списки", 9)
 student_1.rate_lection(lector_1, "Python.ООП", 8)
 student_1.rate_lection(lector_1, "Python.Списки", 9)
@@ -157,13 +194,18 @@ student_1.rate_lection(professor, "Python.ООП", 10)
 student_1.rate_lection(professor, "GIT", 9)
 student_1.rate_lection(professor, "Python.ООП", 10)
 student_1.rate_lection(professor, "Python.Словари", 10)
-
+aspirant.rate_lection(professor, "GIT", 10)
 
 # print(student_1.comparison(aspirant))
 # print(lector_1.comparison(professor))
 # print("-------------------")
 # print(aspirant.comparison(student_1))
 # print(professor.comparison(lector_1))
-print(student_1.grades)
-print(student_1.group_mark("GIT"))
-print(professor.group_mark("GIT"))
+# print(student_1.group_mark("GIT"))
+# print(aspirant.group_mark("GIT"))
+# print(professor.group_mark("GIT"))
+# print(lector_1.group_mark("GIT"))
+# print(student_1)
+print(professor != lector_1)
+print(professor < lector_1)
+print(professor != lector_1)
